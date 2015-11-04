@@ -10,17 +10,36 @@
   &nbsp;&nbsp;&nbsp;&nbsp;
   <button type="button" onclick="tellReady();">On Air</button>
   <br />
+  <div id="nicoscreen">
   <div style="position: relative;">
    <video id="local-video" autoplay style="width: 320px; height: 240px; border: 1px solid black;"></video>
   </div>
+  </div>
   
-  <script src="http://localhost:9001/socket.io/socket.io.js"></script>
+  <script src="http://172.19.200.173:9001/socket.io/socket.io.js"></script>
+  <script src="http://172.19.200.173/jquery.js"></script>
+  <script src="http://172.19.200.173/nicoscreen.js"></script>
   
   <script>
+  window.onload = function() {
+      var obj = {
+          "base":{
+            color:"white",
+            speed:"normal",
+            interval:"slow",
+            font_size:"50px",
+            loop:true
+          },
+          "comments":[
+              ]
+      };
+
+      nicoscreen.set(obj);
+      nicoscreen.start();
+  };
   var localVideo = document.getElementById('local-video');
   var localStream = null;
   var mediaConstraints = {'mandatory': {'OfferToReceiveAudio':false, 'OfferToReceiveVideo':false }};
-
   
   function isLocalStreamStarted() {
     if (localStream) {
@@ -137,7 +156,7 @@
   // create socket
   var socketReady = false;
   var port = 9001;
-  var socket = io.connect('http://localhost:' + port + '/');
+  var socket = io.connect('http://172.19.200.173:' + port + '/');
 
   // socket: channel connected
   socket.on('connect', onOpened)
@@ -179,6 +198,10 @@
     else if (evt.type === 'bye') { 
       console.log("got bye.");
       stopConnection(id);
+    }
+    else if (evt.type === 'comment') { 
+        console.log("comment:" + evt.value);
+        nicoscreen.add(evt.value);
     }
   }
 

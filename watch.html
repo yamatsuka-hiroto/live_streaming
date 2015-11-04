@@ -8,13 +8,38 @@
   <button type="button" onclick="sendRequest();">Request</button>
   <button type="button" onclick="hangUp();">Hang Up</button>
   <br />
+  <div id="nicoscreen">
   <div style="position: relative;">
    <video id="remote-video" autoplay style="width: 320px; height: 240px; border: 1px solid black;"></video>
   </div>
+  </div>
+  <input id="comment" type="text" style="width:80%" onkeypress="inputComment()"/>
+  <button type="button" onclick="sendComment();">Comment</button>
   
-  <script src="http://localhost:9001/socket.io/socket.io.js"></script>
+  <script src="http://172.19.200.173:9001/socket.io/socket.io.js"></script>
+  <script src="http://172.19.200.173/jquery.js"></script>
+  <script src="http://172.19.200.173/nicoscreen.js"></script>
   
   <script>
+  window.onload = function() {
+      var obj = {
+          "base":{
+            color:"white",
+            speed:"normal",
+            interval:"slow",
+            font_size:"50px",
+            loop:true
+          },
+          "comments":[
+              ]
+      };
+
+      nicoscreen.set(obj);
+      nicoscreen.start();
+  };
+
+
+
   //var localVideo = document.getElementById('local-video');
   var remoteVideo = document.getElementById('remote-video');
   //var localStream = null;
@@ -39,7 +64,7 @@
     console.log('--resize--');
     var top_margin = 40;
     var left_margin = 20;
-    var video_margin = 10;
+    var video_margin = 50;
 
     var new_width = window.innerWidth - left_margin - video_margin;
     var new_height = window.innerHeight - top_margin - video_margin;
@@ -141,7 +166,7 @@
   // create socket
   var socketReady = false;
   var port = 9001;
-  var socket = io.connect('http://localhost:' + port + '/');
+  var socket = io.connect('http://172.19.200.173:' + port + '/');
   
   // socket: channel connected
   socket.on('connect', onOpened)
@@ -191,7 +216,10 @@
       detachVideo(id); // force detach video
       stopConnection(id);
     }
-
+    else if (evt.type === 'comment') { 
+        console.log("comment:" + evt.value);
+        nicoscreen.add(evt.value);
+    }
   }
 
   function onUserDisconnect(evt) {
@@ -356,6 +384,19 @@
     detachVideo(null);
     stopAllConnections();
   }
+
+function sendComment() {
+    var comment = document.getElementById('comment');
+    socket.json.send({type: "comment", value: comment.value});
+    nicoscreen.add(comment.value);
+    comment.value = "";
+}
+
+function inputComment() {
+    if (window.event.keyCode == 13) {
+        sendComment();
+    }
+}
 
   
   </script>
