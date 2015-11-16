@@ -3,22 +3,89 @@
 <head>
   <title>broadcast watch</title>  
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <style type="text/css">
+    body {
+      background-image: url(kikkou.jpg);
+      background-repeat: repeat-x repeat-y;
+    }
+
+    img#title {
+      width: 30%;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 10px;
+      margin-bottom: 10px;
+
+    }
+    .button_down_request {
+      color: #FFFFFF;
+      background: #FF0000;
+    }
+    .button_down_hungup {
+      color: #FFFFFF;
+      background: #808080;
+    }
+    .button_comment{
+      color: #FFFFFF;
+      background: #4169E1;
+      font-weight: bold;
+      font-size: 5px;
+      border: 1px solid #DDD;
+      border-radius: 5px;
+      -moz-border-radius: 5px;
+      -webkit-border-radius: 5px;
+      
+      width: 10%;
+      padding: 5px;
+    }
+    #comment {
+
+    }
+    .input_comment {
+      border: 1px solid #DDD;
+      border-radius: 5px;
+      -moz-border-radius: 5px;
+      -webkit-border-radius: 5px;
+
+      height: 20px;
+      margin: 2px;
+    }
+    .button_down {
+      font-weight: bold;
+      font-size: 8px;
+      border: 1px solid #DDD;
+      border-radius: 5px;
+      -moz-border-radius: 5px;
+      -webkit-border-radius: 5px;
+      
+      width: 10%;
+      padding: 5px;
+      margin: 2px;
+    }
+}
+
+
+
+  </style>
+
 </head>
 <body>
-  <button type="button" onclick="sendRequest();">Request</button>
-  <button type="button" onclick="hangUp();">Hang Up</button>
-  <br />
+  <div><img src="5okuemon_tv.png" alt="五億衛門TV（生）" id="title"></div>
   <div id="nicoscreen">
-  <div style="position: relative;">
+  <div style="position: relative;background-color: black;">
    <video id="remote-video" autoplay style="width: 320px; height: 240px; border: 1px solid black;"></video>
   </div>
   </div>
-  <input id="comment" type="text" style="width:80%" onkeypress="inputComment()"/>
-  <button type="button" onclick="sendComment();">Comment</button>
-  
-  <script src="http://172.19.200.173:9001/socket.io/socket.io.js"></script>
-  <script src="http://172.19.200.173/jquery.js"></script>
-  <script src="http://172.19.200.173/nicoscreen.js"></script>
+  <div id="">
+    <button type="button" class="button_down button_down_request" onclick="sendRequest();">視聴</button>
+    <button type="button" class="button_down button_down_hungup" onclick="hangUp();">中断</button>
+    <input id="comment" class="input_comment" type="text" style="width:65%" onkeypress="inputComment()"/>
+    <button type="button" class="button_comment" onclick="sendComment();">コメント</button>
+  <div>
+  <script src="http://172.19.202.1:9001/socket.io/socket.io.js"></script>
+  <script src="http://172.19.202.1/jquery.js"></script>
+  <script src="http://172.19.202.1/nicoscreen.js"></script>
   
   <script>
   window.onload = function() {
@@ -63,8 +130,8 @@
   function resizeRemoteVideo() {
     console.log('--resize--');
     var top_margin = 40;
-    var left_margin = 20;
-    var video_margin = 50;
+    var left_margin = 0; // 20
+    var video_margin = 0; //50
 
     var new_width = window.innerWidth - left_margin - video_margin;
     var new_height = window.innerHeight - top_margin - video_margin;
@@ -72,6 +139,7 @@
     remoteVideo.style.height = new_height + 'px';
     remoteVideo.style.top = top_margin + 'px';
     remoteVideo.style.left = left_margin + 'px';
+
   }
   document.body.onresize = resizeRemoteVideo;
   resizeRemoteVideo();
@@ -166,7 +234,7 @@
   // create socket
   var socketReady = false;
   var port = 9001;
-  var socket = io.connect('http://172.19.200.173:' + port + '/');
+  var socket = io.connect('http://172.19.202.1:' + port + '/');
   
   // socket: channel connected
   socket.on('connect', onOpened)
